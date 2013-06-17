@@ -10,7 +10,7 @@
 #import "DAKeyboardControl.h"
 
 @interface ViewController ()
-
+@property (strong,nonatomic) UITextField *textField;
 @end
 
 @implementation ViewController
@@ -42,18 +42,23 @@
                                                                            30.0f)];
     textField.borderStyle = UITextBorderStyleRoundedRect;
     textField.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    self.textField = textField;
     [toolBar addSubview:textField];
     
     UIButton *sendButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     sendButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
-    [sendButton setTitle:@"Send" forState:UIControlStateNormal];
+    [sendButton setTitle:@"Cover" forState:UIControlStateNormal];
+    [sendButton addTarget:self action:@selector(coverTheKeyboard) forControlEvents:UIControlEventTouchUpInside];
     sendButton.frame = CGRectMake(toolBar.bounds.size.width - 68.0f,
                                   6.0f,
                                   58.0f,
                                   29.0f);
     [toolBar addSubview:sendButton];
     
+    UIView *keyboardCover = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
+    keyboardCover.backgroundColor = [UIColor redColor];
     
+    self.view.keyboardCoverView = keyboardCover;
     self.view.keyboardTriggerOffset = toolBar.bounds.size.height;
     
     [self.view addKeyboardPanningWithActionHandler:^(CGRect keyboardFrameInView) {
@@ -80,6 +85,11 @@
         return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
     else
         return YES;
+}
+
+- (void) coverTheKeyboard{
+    [self.textField becomeFirstResponder];
+    self.view.isKeyboardCoverViewVisible = !self.view.isKeyboardCoverViewVisible;
 }
 
 @end

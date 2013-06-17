@@ -30,6 +30,13 @@ typedef void (^DAKeyboardDidMoveBlock)(CGRect keyboardFrameInView);
  @see addKeyboardNonpanningWithActionHandler:
  @see removeKeyboardControl
  */
+
+/** The keyboardCoverView allows you to view on top of the keyboard^ which will be moved with keyboard.
+*/
+@property (readwrite,nonatomic) UIView *keyboardCoverView;
+@property (readwrite,nonatomic) BOOL isKeyboardCoverViewVisible;
+
+
 - (void)addKeyboardPanningWithActionHandler:(DAKeyboardDidMoveBlock)didMoveBlock;
 
 /** Adding keyboard awareness (appearance and disappearance only)

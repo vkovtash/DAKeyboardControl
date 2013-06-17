@@ -39,6 +39,8 @@ static char UIViewKeyboardActiveView;
 static char UIViewKeyboardPanRecognizer;
 static char UIViewPreviousKeyboardRect;
 static char UIViewIsPanning;
+static char UIViewKeyboardCoverView;
+static BOOL UIViewIsKeyboardCoverViewVisible;
 
 @interface UIView (DAKeyboardControl_Internal) <UIGestureRecognizerDelegate>
 
@@ -189,6 +191,8 @@ static char UIViewIsPanning;
     self.keyboardActiveInput = nil;
     self.keyboardActiveView = nil;
     self.keyboardPanRecognizer = nil;
+    [self.keyboardCoverView removeFromSuperview];
+    self.keyboardCoverView = nil;
 }
 
 - (void)hideKeyboard
@@ -198,8 +202,42 @@ static char UIViewIsPanning;
         self.keyboardActiveView.hidden = YES;
         self.keyboardActiveView.userInteractionEnabled = NO;
         [self.keyboardActiveInput resignFirstResponder];
+        self.isKeyboardCoverViewVisible = NO;
     }
 }
+
+- (BOOL) isKeyboardCoverViewVisible{
+    return UIViewIsKeyboardCoverViewVisible;
+}
+
+- (void) setIsKeyboardCoverViewVisible:(BOOL)isKeyboardCoverViewVisible{
+    if (UIViewIsKeyboardCoverViewVisible != isKeyboardCoverViewVisible) {
+        UIViewIsKeyboardCoverViewVisible = isKeyboardCoverViewVisible;
+        
+        if (UIViewIsKeyboardCoverViewVisible) {
+            [self coverKeyboard];
+        }
+        else{
+            [self uncoverKeyboard];
+        }
+    }
+}
+
+- (void) coverKeyboard{
+    if (self.keyboardCoverView && self.keyboardActiveView) {
+        self.keyboardCoverView.frame = self.keyboardActiveView.bounds;
+        [self.keyboardActiveView addSubview:self.keyboardCoverView];
+        self.keyboardActiveView.userInteractionEnabled = NO;
+        self.keyboardActiveView.autoresizesSubviews = YES;
+    }
+}
+
+- (void) uncoverKeyboard{
+    self.keyboardActiveView.autoresizesSubviews = NO;
+    self.keyboardActiveView.userInteractionEnabled = YES;
+    [self.keyboardCoverView removeFromSuperview];
+}
+
 
 #pragma mark - Input Notifications
 
@@ -271,6 +309,10 @@ static char UIViewIsPanning;
     {
         // Find the first responder on subviews and look re-assign first responder to it
         [self reAssignFirstResponder];
+    }
+    
+    if (UIViewIsKeyboardCoverViewVisible){
+        [self coverKeyboard];
     }
 }
 
@@ -676,6 +718,23 @@ static char UIViewIsPanning;
     CGPoint velocity = [self.keyboardPanRecognizer velocityInView:self.keyboardActiveView];
     
     return touchLocationInKeyboardWindow.y >= thresholdHeight && velocity.y >= 0;
+}
+
+- (UIView *)keyboardCoverView
+{
+    return objc_getAssociatedObject(self,
+                                    &UIViewKeyboardCoverView);
+}
+
+- (void)setKeyboardCoverView:(UIView *)keyboardCoverView
+{
+    [self willChangeValueForKey:@"keyboardCoverView"];
+    keyboardCoverView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+    objc_setAssociatedObject(self,
+                             &UIViewKeyboardCoverView,
+                             keyboardCoverView,
+                             OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    [self didChangeValueForKey:@"keyboardCoverView"];
 }
 
 @end
