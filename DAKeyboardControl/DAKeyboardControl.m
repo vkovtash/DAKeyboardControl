@@ -227,14 +227,12 @@ static BOOL UIViewIsKeyboardCoverViewVisible;
     if (self.keyboardCoverView && self.keyboardActiveView) {
         self.keyboardCoverView.frame = self.keyboardActiveView.bounds;
         [self.keyboardActiveView addSubview:self.keyboardCoverView];
-        self.keyboardActiveView.userInteractionEnabled = NO;
         self.keyboardActiveView.autoresizesSubviews = YES;
     }
 }
 
 - (void) uncoverKeyboard{
     self.keyboardActiveView.autoresizesSubviews = NO;
-    self.keyboardActiveView.userInteractionEnabled = YES;
     [self.keyboardCoverView removeFromSuperview];
 }
 
