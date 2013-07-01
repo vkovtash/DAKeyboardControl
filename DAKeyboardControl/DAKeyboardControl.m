@@ -191,6 +191,7 @@ static BOOL UIViewIsKeyboardCoverViewVisible;
     self.keyboardActiveInput = nil;
     self.keyboardActiveView = nil;
     self.keyboardPanRecognizer = nil;
+    self.isKeyboardCoverViewVisible = NO;
     [self.keyboardCoverView removeFromSuperview];
     self.keyboardCoverView = nil;
 }
