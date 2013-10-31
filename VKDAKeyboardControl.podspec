@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name     = 'VKDAKeyboardControl'
-  s.version  = '2.3.0'
+  s.version  = '2.3.1'
   s.platform = :ios
   s.license  = 'MIT'
   s.summary  = 'Easily add keyboard awareness and scrolling dismissal. Allows to add subview to keyboard.'
